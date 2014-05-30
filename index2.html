@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <!-- <script src='https://cdn.firebase.com/js/client/1.0.15/firebase.js'></script> -->
+    <script src='./firebase.js'></script>
+    <!-- <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script> -->
+    <script src='./jquery.js'></script>
+  </head>
+  <body>
+    <div id='messagesDiv'></div>
+    <input type='text' id='nameInput' placeholder='Name'>
+    <input type='text' id='messageInput' placeholder='Message'>
+    <script>
+      var x ;
+      var myDataRef = new Firebase('https://space-ball.firebaseio.com/');
+      $('#messageInput').keypress(function (e) {
+        if (e.keyCode == 13) {
+          //var name = $('#nameInput').val();
+          var text = $('#messageInput').val();
+          //myDataRef.push({name: name, text: text});
+          if(x.length < 10){
+            x.push(parseInt(text));
+            x.sort(function(a, b) {return a - b;});
+            myDataRef.set({value: x});          
+          }
+          else{
+            // check smallest
+            if (parseInt(text) > x[0]) { // replace smallest
+              x[0] = parseInt(text);
+              x.sort(function(a, b) {return a - b;});
+              myDataRef.set({value: x});    
+            };
+          }
+          $('#messageInput').val('');
+        }
+      });
+      //myDataRef.set({value: [1, 2, 3]});
+      //myDataRef.push([4, 5, 6]);
+      myDataRef.on('child_added', function(snapshot) {
+        var message = snapshot.val();
+        console.log(message);  
+        x = message;
+      });
+      myDataRef.on('child_changed', function(snapshot){
+        console.log("changed");
+        console.log(snapshot.val());
+        x = snapshot.val();
+      })
+    </script>
+  </body>
+</html>

@@ -12,6 +12,12 @@
     6: The Planet that can change the radius
     7: Teleport Star
     
+    排行榜
+
+    谁， 说什么， 多少分
+
+    前30名
+
 */
 var COUNT = 0;
 var RADIUS_OF_THE_BALL = 10;
@@ -279,6 +285,32 @@ var game_is_over = function(){
     scorelabel.animate({"font-size": 80, x:WIDTH/2, y:HEIGHT/2, text:"Score:\n"+parseInt(SCORE)}, 500)
     //alert("GAME OVER");
 }
+/*
+    generate new planet randomly
+*/
+var generate_new_planet = function(){
+    var x = Math.random() * WIDTH;
+    var r = PLANET_MAX_RADIUS * Math.random();
+    r = r < PLANET_MIN_RADIUS ? PLANET_MIN_RADIUS : r;
+
+    if(x - r < 0) x = x + r;
+    if(x + r > WIDTH) x = x - r;
+    
+
+    var planet = new Planet(x, 0, r);
+    if (Math.random() < 0.7) { // draw explode and normal 0 and 4  
+        if (Math.random() + MOVE_DOWN_SPEED / 10 > 0.6)
+            planet.type = 4;
+        else
+            planet.type = 0;
+    }
+    else{ // draw 1 2 3 5 6
+        planet.type = parseInt(Math.random()*7);
+    }
+    planet.used = 0;
+    planet.draw();
+    PLANETS.push(planet);
+}
 
 init_game(); // init game
 
@@ -292,27 +324,7 @@ setInterval(function(){
     COUNT = COUNT + MOVE_DOWN_SPEED;
     if(COUNT > 80 + (MOVE_DOWN_SPEED) * 30){
         COUNT = 0;
-        var x = Math.random() * WIDTH;
-        var r = PLANET_MAX_RADIUS * Math.random();
-        r = r < PLANET_MIN_RADIUS ? PLANET_MIN_RADIUS : r;
-
-        if(x - r < 0) x = x + r;
-        if(x + r > WIDTH) x = x - r;
-        
-
-        var planet = new Planet(x, 0, r);
-        if (Math.random() < 0.7) { // draw explode and normal 0 and 4  
-            if (Math.random() + MOVE_DOWN_SPEED / 10 > 0.6)
-                planet.type = 4;
-            else
-                planet.type = 0;
-        }
-        else{ // draw 1 2 3 5 6
-            planet.type = parseInt(Math.random()*7);
-        }
-        planet.used = 0;
-        planet.draw();
-        PLANETS.push(planet);
+        generate_new_planet();
     }
     // show score
     scorelabel.attr({text: "Score\n" + parseInt(SCORE)})
@@ -333,6 +345,9 @@ setInterval(function(){
             continue;
         } // too low
         if( p.type === 4 && p.used === 1) { // check explosion
+            if(p.exploding_timer == 2){ // 为了保证肯定能跳
+                generate_new_planet(); 
+            }
             p.exploding_timer -= TIME_INTERVAL;
             if(p.exploding_timer < 0){
                 var save_ = p;
