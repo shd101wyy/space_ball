@@ -17,18 +17,24 @@ var COUNT = 0;
 var RADIUS_OF_THE_BALL = 10;
 var TIME_INTERVAL = 30;
 var PLANETS = [];
+var PLANETS_START = 0;
 var DOTS = [];
 var dot;
-var HEIGHT = 960;
-var WIDTH = 1024;
+var HEIGHT = window.innerHeight;
+var WIDTH = window.innerWidth;
 var MOVE_DOWN_SPEED = 0;
 // var alive = true;
 var BUTTON_CLICKED = 0;
 var SCORE = 0;
 var paper = Raphael (0,0,WIDTH,HEIGHT);
 var background = paper.rect(0,0,WIDTH,HEIGHT);
-var BACKGROUND_COLOR = "#000";
+var BACKGROUND_COLOR = "#454545";
 var GAME_OVER = false;
+var GAME_START = false;
+
+var PLANET_MAX_RADIUS = WIDTH * 0.1;
+var PLANET_MIN_RADIUS = WIDTH * 0.04;
+
 background.attr("fill", BACKGROUND_COLOR);
 
 document.body.addEventListener('touchmove', function(event) {
@@ -52,7 +58,7 @@ function Planet(x, y, radius){
     this.increasing_radius_rate = 2;
     this.text = "";
     this.press_count = 0;
-    this.exploding_timer = 4000; // 4000 miliseconds
+    this.exploding_timer = 4000 + Math.random() * 6000; // 4000 miliseconds
     this.can_be_used = true;
     this.draw = function(){
         // draw planet
@@ -73,10 +79,10 @@ function Planet(x, y, radius){
                 this.text = paper.text(this.x, this.y, "⟰").attr({"fill" : "white", "font-size": 40 });
                 break;
             case 3: //press 10 times to project
-                this.press_count = 10;
+                this.press_count = parseInt(11 * Math.random());
                 this.planet.attr("fill", "#cc9966");
                 this.planet.attr("stroke", "#cc9966");
-                this.text = paper.text(this.x, this.y, "10").attr({"fill" : "white", "font-size": 30 });
+                this.text = paper.text(this.x, this.y, this.press_count+"").attr({"fill" : "white", "font-size": 30 });
                 break;
             case 4: //Exploding Stars. (Lose )
                 this.planet.attr("fill", "#cc3333");
@@ -146,63 +152,36 @@ function Planet(x, y, radius){
      
 }
 */
-var scorelabel = paper.text(100,100,"Score\n"+SCORE).attr({ fill: 'white'});
-scorelabel.attr({"font-size": 40});
+var scorelabel;
+var planet1;
+var planet2;
+var planet3;
 
 
-var planet1 = new Planet(320,300,50,120);
-planet1.draw();
 /*
-planet1.text.attr({text:"Start Game!"});
-var scorelabel = paper.text(320,600,"Start Game!",r({ fill: 'white'});
-scorelabel.attr({"font-size": 16});
+
+ init game
 
 */
-var planet2 = new Planet(360, 150, 60, 120);
-planet2.type = 4; // press 10 times
-planet2.draw();
-
-var planet3 = new Planet(planet2.x+Math.random()*50+100,
-                         -50,30+Math.random()*60, 120);
-planet3.type = 0;
-planet3.draw();
-
-
-PLANETS.push(planet1);
-PLANETS.push(planet2);
-PLANETS.push(planet3);
-
-dot = paper.circle(planet1.x, planet1.y + planet1.orbit, RADIUS_OF_THE_BALL);
-dot.attr("fill", "#FFF");
-dot.attr("stroke", "#FFF");
-dot.leaving_planet = null;
-dot.orbiting_planet = planet1;
-dot.status = 0;
-dot.CLOCKWISE = false;
-dot.TIME = 0;
-dot.THETA0 = 0;
-dot.lose = false;
-
-DOTS.push(dot); // save dot;
-
-
-
-var click_event = function(){  
-    if(GAME_OVER){
+var init_game = function(){
         GAME_OVER = false;
+        GAME_START = false; // need to click to start
         background = paper.rect(0,0,WIDTH,HEIGHT);
         background.attr("fill", BACKGROUND_COLOR);
         // reset everything
         COUNT = 0;
         RADIUS_OF_THE_BALL = 10;
         TIME_INTERVAL = 30;
+        
         PLANETS = [];
+        PLANETS_START = 0; // clear planets
+        
         DOTS = [];        
         BUTTON_CLICKED = 0;
         SCORE = 0;
-        MOVE_DOWN_SPEED = 0;
+        MOVE_DOWN_SPEED = 0.5;//0.5;
         
-        scorelabel = paper.text(100,100,"Score\n"+SCORE).attr({ fill: 'white'});
+        scorelabel = paper.text(WIDTH / 2, HEIGHT / 2 + 50,"Press Space or Click or Touch Screen to Start\nScore\n"+parseInt(SCORE)).attr({ fill: 'white'});
         scorelabel.attr({"font-size": 40});
         
         planet1 = new Planet(320,300,50,120);
@@ -234,6 +213,19 @@ var click_event = function(){
         
         DOTS.push(dot); // save dot;
         
+}
+
+
+var click_event = function(){  
+    if(GAME_OVER){
+        init_game();
+        GAME_START = true;
+        scorelabel.attr({x : 100, y : 100, text: "Score\n" + parseInt(SCORE)})
+        return;
+    }
+    if(GAME_START === false){
+        GAME_START = true;
+        scorelabel.attr({x : 100, y : 100, text: "Score\n" + parseInt(SCORE)})
         return;
     }
     for(var i = 0; i < DOTS.length; i++){
@@ -276,32 +268,70 @@ document.body.addEventListener('touchstart', function(event) {
   event.preventDefault();
   click_event();
 }, false); 
+
+document.body.addEventListener('keydown', function(evt){
+    if(evt.which === 32){ // space
+        click_event();
+    }             
+});
+
 var game_is_over = function(){
-    scorelabel.animate({"font-size": 80, x:WIDTH/2, y:HEIGHT/2, text:"Score:\n"+SCORE}, 500)
+    scorelabel.animate({"font-size": 80, x:WIDTH/2, y:HEIGHT/2, text:"Score:\n"+parseInt(SCORE)}, 500)
     //alert("GAME OVER");
 }
+
+init_game(); // init game
+
 setInterval(function(){
-    MOVE_DOWN_SPEED+=0.02*parseInt(SCORE/100);
-    if(MOVE_DOWN_SPEED > 2.5){
-        MOVE_DOWN_SPEED = 2.5;
+    if(GAME_START === false) return;
+    MOVE_DOWN_SPEED += 0.02*parseInt(SCORE/100);
+    if(MOVE_DOWN_SPEED > 3.0){
+        MOVE_DOWN_SPEED = 3.0;
     }
-    COUNT = COUNT + 1 + parseInt(SCORE/100);
-    if(COUNT > 200){
+    SCORE += 0.01;
+    COUNT = COUNT + MOVE_DOWN_SPEED;
+    if(COUNT > 80 + (MOVE_DOWN_SPEED) * 30){
         COUNT = 0;
-        var planet = new Planet((Math.random()-0.5)*600+650,0, 50+50 * Math.random(),100);
-        planet.type = parseInt(Math.random()*7);
+        var x = Math.random() * WIDTH;
+        var r = PLANET_MAX_RADIUS * Math.random();
+        r = r < PLANET_MIN_RADIUS ? PLANET_MIN_RADIUS : r;
+
+        if(x - r < 0) x = x + r;
+        if(x + r > WIDTH) x = x - r;
+        
+
+        var planet = new Planet(x, 0, r);
+        if (Math.random() < 0.7) { // draw explode and normal 0 and 4  
+            if (Math.random() + MOVE_DOWN_SPEED / 10 > 0.6)
+                planet.type = 4;
+            else
+                planet.type = 0;
+        }
+        else{ // draw 1 2 3 5 6
+            planet.type = parseInt(Math.random()*7);
+        }
         planet.used = 0;
         planet.draw();
         PLANETS.push(planet);
     }
     // show score
-    scorelabel.attr({text: "Score\n" + SCORE})
+    scorelabel.attr({text: "Score\n" + parseInt(SCORE)})
     //if(BUTTON_CLICKED) return;
-    for(var i = 0; i < PLANETS.length; i++){ // move each planet down
+    for(var i = PLANETS_START; i < PLANETS.length; i++){ // move each planet down
         var p = PLANETS[i];
-        if(p.can_be_used === false) continue;
+        if(p === null) continue;
+        if(p.can_be_used === false) {
+            PLANETS[i] = null;
+            // PLANETS_START = i;
+            continue;
+        }
         p.move_down(); // move down
-        if(p.planet.attr("cy") >= HEIGHT + 200){p.can_be_used = false; continue;} // too low
+        if(p.planet.attr("cy") >= HEIGHT + 200){
+            // p.can_be_used = false; 
+            PLANETS[i] = null;
+            PLANETS_START = i;
+            continue;
+        } // too low
         if( p.type === 4 && p.used === 1) { // check explosion
             p.exploding_timer -= TIME_INTERVAL;
             if(p.exploding_timer < 0){
@@ -363,8 +393,9 @@ setInterval(function(){
         }
         else{ // flying
             //console.log("FLYING X: " + dot.attr("cx") + " Y: " + dot.attr("cy"));
-            for(var j = 0; j < PLANETS.length; j++){
+            for(var j = PLANETS_START; j < PLANETS.length; j++){
                 var p = PLANETS[j];
+                if(p === null) continue;
                 if(p.can_be_used === false) continue;
                 if(p.y >= HEIGHT) continue;
                 if(p === dot.leaving_planet) continue;
@@ -392,7 +423,7 @@ setInterval(function(){
                             if(p.used == 0){
                                 p.used = 1;
                                 SCORE += 20;
-                                p.press_count = 10;
+                                // p.press_count = 10;
                             }
                             break
                         case 4: // exploding
@@ -466,7 +497,11 @@ setInterval(function(){
         }
     }
     if(GAME_OVER) // game over
+    {
+        scorelabel.attr("text", "Press Space or Click or Touch Screen to Start\nScore\n"+parseInt(SCORE));
+        scorelabel.attr({"font-size": 40});
         game_is_over();
+    }
 }   , TIME_INTERVAL)
 
     
