@@ -91,7 +91,6 @@ function Planet(x, y, radius){
     this.orbit = radius + 20;
     this.w = 35*Math.sqrt(1/this.radius);
     this.inside = false;
-    //this.planet = paper.circle(this.x,this.y,this.radius);
 
     this.planet = new createjs.Shape();
     stage.addChild(this.planet);
@@ -108,7 +107,7 @@ function Planet(x, y, radius){
     stage.addChild(this.text);
     
     this.press_count = 0;
-    this.exploding_timer = 6000 + Math.random() * 6000; // 4000 miliseconds
+    this.exploding_timer = parseInt(5000 + Math.random() * 6000); // 4000 miliseconds
     this.can_be_used = true;
     this.draw = function(){
         // draw planet
@@ -492,11 +491,10 @@ function tick(){
                     160 / 100
                     -44 / 100
                 */
-                if(p.exploding_timer >= -2000){
-                    //save_.planet.beginFill("yellow");
-                    save_.planet.redOffset = parseInt(save_.planet.redOffset + 47/100);
-                    save_.planet.greenOffset = parseInt(save_.planet.greenOffset + 160/100);
-                    save_.planet.blueOffset = parseInt(save_.planet.blueOffset - 44/100);
+                if(p.exploding_timer >= -1500){
+                    save_.planet.redOffset = parseInt(save_.planet.redOffset + 1);
+                    save_.planet.greenOffset = parseInt(save_.planet.greenOffset + 1);
+                    save_.planet.blueOffset = parseInt(save_.planet.blueOffset - 1);
                     var r = save_.planet.redOffset;
                     var g = save_.planet.greenOffset;
                     var b = save_.planet.blueOffset;
@@ -510,23 +508,13 @@ function tick(){
                 }
                 else{
                     p.can_be_used = false;
-                    /*
-                    save_.planet.animate({fill: "#fffe33", r: p.radius + 30}, 1000, function(){
-                        save_.planet.animate({fill: BACKGROUND_COLOR, r: 0}, 1000); // explosion effect
-                        save_.text.attr({text: "Boom!!!"})
-                        save_.text.animate({fill: BACKGROUND_COLOR}, 1000, function(){
-                            save_.text.animate({y:HEIGHT + 200}); // clear text and planet
-                            save_.planet.animate({cy:HEIGHT + 200});
-                        });
-                    })
-                    */
-                    for(var j = 0; j < DOTS.length; j++){
-                        if(DOTS[j].status === 1) continue;
-                        if(DOTS[j].lose) continue;
-                        if(DOTS[j].orbiting_planet === PLANETS[i]){
-                            DOTS[j].lose = true;
-                            DOTS[j].y = HEIGHT + 400;
-                        }
+                }
+                for(var j = 0; j < DOTS.length; j++){
+                    if(DOTS[j].status === 1) continue;
+                    if(DOTS[j].lose) continue;
+                    if(DOTS[j].orbiting_planet === PLANETS[i]){
+                        DOTS[j].lose = true;
+                        DOTS[j].y = HEIGHT + 400;
                     }
                 }
             }
