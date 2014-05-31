@@ -108,7 +108,7 @@ function Planet(x, y, radius){
     stage.addChild(this.text);
     
     this.press_count = 0;
-    this.exploding_timer = 6000 + parseInt(Math.random() * 6000)/1000*6; // 4000 miliseconds
+    this.exploding_timer = 6000 + Math.random() * 6000; // 4000 miliseconds
     this.can_be_used = true;
     this.draw = function(){
         // draw planet
@@ -163,6 +163,11 @@ function Planet(x, y, radius){
                 this.planet.graphics.beginFill("#cc3333").drawCircle(0, 0, this.radius);
                 this.planet.x = this.x;
                 this.planet.y = this.y
+                
+                // 保存rgb
+                this.planet.redOffset = 204;
+                this.planet.greenOffset = 51;
+                this.planet.blueOffset = 51;
                 
                 this.text.text = "✇";
                 this.text.font = "bold 40 Impact";
@@ -479,24 +484,49 @@ function tick(){
             p.exploding_timer -= TIME_INTERVAL;
             if(p.exploding_timer < 0){
                 var save_ = p;
-                p.can_be_used = false;
                 /*
-                save_.planet.animate({fill: "#fffe33", r: p.radius + 30}, 1000, function(){
-                    save_.planet.animate({fill: BACKGROUND_COLOR, r: 0}, 1000); // explosion effect
-                    save_.text.attr({text: "Boom!!!"})
-                    save_.text.animate({fill: BACKGROUND_COLOR}, 1000, function(){
-                        save_.text.animate({y:HEIGHT + 200}); // clear text and planet
-                        save_.planet.animate({cy:HEIGHT + 200});
-                    });
-                })
+                    rgb(204, 51, 51)
+                    到 rgb(247, 210, 7)
+                    
+                    47 / 100
+                    160 / 100
+                    -44 / 100
                 */
-                // save_.beginFill("yellow");
-                for(var j = 0; j < DOTS.length; j++){
-                    if(DOTS[j].status === 1) continue;
-                    if(DOTS[j].lose) continue;
-                    if(DOTS[j].orbiting_planet === PLANETS[i]){
-                        DOTS[j].lose = true;
-                        DOTS[j].y = HEIGHT + 400;
+                if(p.exploding_timer >= -2000){
+                    //save_.planet.beginFill("yellow");
+                    save_.planet.redOffset = parseInt(save_.planet.redOffset + 47/100);
+                    save_.planet.greenOffset = parseInt(save_.planet.greenOffset + 160/100);
+                    save_.planet.blueOffset = parseInt(save_.planet.blueOffset - 44/100);
+                    var r = save_.planet.redOffset;
+                    var g = save_.planet.greenOffset;
+                    var b = save_.planet.blueOffset;
+                    save_.text.text = "Boom"
+                    save_.planet.graphics.clear();
+                    save_.planet.graphics.beginFill(createjs.Graphics.getRGB(r, g, b));
+                    save_.planet.graphics.drawCircle(0, 0, save_.radius);
+                    save_.planet.x = save_.x;
+                    save_.planet.y = save_.y;
+                    save_.radius += 0.5;  
+                }
+                else{
+                    p.can_be_used = false;
+                    /*
+                    save_.planet.animate({fill: "#fffe33", r: p.radius + 30}, 1000, function(){
+                        save_.planet.animate({fill: BACKGROUND_COLOR, r: 0}, 1000); // explosion effect
+                        save_.text.attr({text: "Boom!!!"})
+                        save_.text.animate({fill: BACKGROUND_COLOR}, 1000, function(){
+                            save_.text.animate({y:HEIGHT + 200}); // clear text and planet
+                            save_.planet.animate({cy:HEIGHT + 200});
+                        });
+                    })
+                    */
+                    for(var j = 0; j < DOTS.length; j++){
+                        if(DOTS[j].status === 1) continue;
+                        if(DOTS[j].lose) continue;
+                        if(DOTS[j].orbiting_planet === PLANETS[i]){
+                            DOTS[j].lose = true;
+                            DOTS[j].y = HEIGHT + 400;
+                        }
                     }
                 }
             }
