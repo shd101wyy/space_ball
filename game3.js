@@ -63,7 +63,7 @@ stage.addChild(txt);
 
 var COUNT = 0;
 var RADIUS_OF_THE_BALL = 10;
-var TIME_INTERVAL = 30;
+var TIME_INTERVAL = 25;
 var PLANETS = [];
 var PLANETS_START = 0;
 var DOTS = [];
@@ -108,7 +108,7 @@ function Planet(x, y, radius){
     stage.addChild(this.text);
     
     this.press_count = 0;
-    this.exploding_timer = 4000 + Math.random() * 6000; // 4000 miliseconds
+    this.exploding_timer = 6000 + parseInt(Math.random() * 6000)/1000*6; // 4000 miliseconds
     this.can_be_used = true;
     this.draw = function(){
         // draw planet
@@ -273,7 +273,7 @@ var init_game = function(){
     // reset everything
     COUNT = 0;
     RADIUS_OF_THE_BALL = 10;
-    TIME_INTERVAL = 30;
+    TIME_INTERVAL = 25;
 
     PLANETS = [];
     PLANETS_START = 0; // clear planets
@@ -472,9 +472,9 @@ function tick(){
             continue;
         } // too low
         if( p.type === 4 && p.used === 1) { // check explosion
-            if(p.exploding_timer == 2){ // 为了保证肯定能跳
-                generate_new_planet(); 
-            }
+            //if (p.exploding_timer <= 2000 + TIME_INTERVAL/2 && p.exploding_timer >= 2000 - TIME_INTERVAL/2 ){ // 为了保证肯定能跳
+            //    generate_new_planet(); 
+            //}
             
             p.exploding_timer -= TIME_INTERVAL;
             if(p.exploding_timer < 0){
@@ -570,6 +570,7 @@ function tick(){
                             break
                         case 4: // exploding
                             //game_is_over();
+                            SCORE += 5;
                             p.used = 1;
                             break;
                         case 5: // reproducing planet
@@ -583,7 +584,7 @@ function tick(){
                                     new_dot.leaving_planet = dot.leaving_planet;
                                     new_dot.orbiting_planet = dot.orbiting_planet;
                                     new_dot.status = 0;
-                                    new_dot.CLOCKWISE = Math.random() > 0.5? dot.CLOCKWISE : -dot.CLOCKWISE;;
+                                    new_dot.CLOCKWISE = (Math.random() > 0.5) ? true : false;;
                                     new_dot.TIME = 0;
                                     new_dot.THETA0 = ran;
                                     new_dot.lose = false;
