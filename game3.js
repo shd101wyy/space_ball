@@ -104,6 +104,7 @@ function Planet(x, y, radius){
     
     this.text = new createjs.Text();
     this.text.textAlign = "center";
+    this.text.textBaseline = "middle";
     stage.addChild(this.text);
     
     this.press_count = 0;
@@ -288,7 +289,8 @@ var init_game = function(){
     MOVE_DOWN_SPEED = 0.5;//0.5;
     
     scorelabel = new createjs.Text();
-    scorelabel.textAlign = "center";
+    scorelabel.textAlign = "center"; // horizontal
+    scorelabel.textBaseline = "middle";  // vertical
     scorelabel.text = "Press Space or Click or Touch Screen to Start\nScore\n"+parseInt(SCORE);
     scorelabel.x = WIDTH / 2;
     scorelabel.y = HEIGHT / 2 + 50;
