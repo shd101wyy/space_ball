@@ -27,7 +27,7 @@ canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
 var stage = new createjs.Stage("game_canvas");
-
+createjs.Touch.enable(stage);
 
 var BACKGROUND_COLOR = "#454545";
 /*
@@ -481,6 +481,7 @@ var DrawMenu = function(){
     start_game_button.addEventListener("click", function(){
         init_game();
     })
+    
     stage.addChild(start_game_button);
     
     start_game_button_text.textAlign = "center";
