@@ -21,7 +21,7 @@
 
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
-
+var SHOW_MENU = true;
 var canvas = document.getElementById("game_canvas");
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
@@ -57,10 +57,6 @@ stage.addChild(txt);
 */
 // stage.update();
 
-
-
-
-
 var COUNT = 0;
 var RADIUS_OF_THE_BALL = 10;
 var TIME_INTERVAL = 25;
@@ -71,7 +67,16 @@ var dot;
 var MOVE_DOWN_SPEED = 0;
 // var alive = true;
 var BUTTON_CLICKED = 0;
+
 var SCORE = 0;
+// check local storage
+if( typeof(window.localStorage["SPACE_BALL_SCORE"]) === 'undefined'){
+    window.localStorage["SPACE_BALL_SCORE"] = SCORE + "";
+}
+else{
+    SCORE= parseInt(window.localStorage["SPACE_BALL_SCORE"]);
+}
+
 var GAME_OVER = false;
 var GAME_START = false;
 
@@ -100,7 +105,7 @@ function Planet(x, y, radius){
     this.used = 0;
     this.max_radius = this.radius * 1.5;
     this.min_radius = this.radius*0.8;
-    this.increasing_radius_rate = 2;
+    this.increasing_radius_rate = 1;
     
     this.text = new createjs.Text();
     this.text.textAlign = "center";
@@ -108,7 +113,7 @@ function Planet(x, y, radius){
     stage.addChild(this.text);
     
     this.press_count = 0;
-    this.exploding_timer = parseInt(5000 + Math.random() * 6000); // 4000 miliseconds
+    this.exploding_timer = parseInt(6000 + Math.random() * 5000); // 4000 miliseconds
     this.can_be_used = true;
     this.draw = function(){
         // draw planet
@@ -265,6 +270,22 @@ var planet2;
 var planet3;
 
 
+document.body.addEventListener("click", function(event){
+    click_event();
+})
+document.body.addEventListener('touchmove', function(event) {
+  event.preventDefault();
+}, false); 
+document.body.addEventListener('touchstart', function(event) {
+  event.preventDefault();
+  click_event();
+}, false); 
+
+document.body.addEventListener('keydown', function(evt){
+    //if(evt.which === 32){ // space
+        click_event();
+    //}             
+});
 /*
 
  init game
@@ -291,9 +312,15 @@ var init_game = function(){
     scorelabel = new createjs.Text();
     scorelabel.textAlign = "center"; // horizontal
     scorelabel.textBaseline = "middle";  // vertical
+   /*
     scorelabel.text = "Press Space or Click or Touch Screen to Start\nScore\n"+parseInt(SCORE);
     scorelabel.x = WIDTH / 2;
     scorelabel.y = HEIGHT / 2 + 50;
+    */
+    scorelabel.x = 100;
+    scorelabel.y = 100;
+    scorelabel.text = "Score\n" + parseInt(SCORE);
+    
     scorelabel.font = "Bold 40 Impact";
     scorelabel.color = "white";
     stage.addChild(scorelabel);
@@ -333,23 +360,17 @@ var init_game = function(){
         
     stage.update();
     
-    
-    console.log(dot.x + " " + dot.y);
-    
+    SHOW_MENU = false;
 }
 
 
-var click_event = function(){  
-    if(GAME_OVER){
-        init_game();
-        GAME_START = true;
-        
-        scorelabel.x = 100;
-        scorelabel.y = 100;
-        scorelabel.text = "Score\n" + parseInt(SCORE);
+var click_event = function(){ 
+    if(SHOW_MENU) return;
+    if(GAME_OVER == true){
+        DrawMenu();
         return;
     }
-    if(GAME_START === false){
+    if(GAME_START == false){
         GAME_START = true;
         scorelabel.x = 100;
         scorelabel.y = 100;
@@ -386,29 +407,19 @@ var click_event = function(){
         }
     }
 }
-document.body.addEventListener("click", function(event){
-    click_event();
-})
-document.body.addEventListener('touchmove', function(event) {
-  event.preventDefault();
-}, false); 
-document.body.addEventListener('touchstart', function(event) {
-  event.preventDefault();
-  click_event();
-}, false); 
 
-document.body.addEventListener('keydown', function(evt){
-    if(evt.which === 32){ // space
-        click_event();
-    }             
-});
 
 var game_is_over = function(){
     scorelabel.x = WIDTH / 2;
     scorelabel.y = HEIGHT / 2;
     scorelabel.text = "Score\n" + parseInt(SCORE);
-    scorelabel.font = "Bold 80 Impact";    
-    // alert("GAME OVER");
+    scorelabel.font = "Bold 80 Impact";   
+    GAME_START = false;
+    
+    if(SCORE > parseInt(window.localStorage["SPACE_BALL_SCORE"])){
+        window.localStorage["SPACE_BALL_SCORE"] = SCORE + "";
+    }
+    
 }
 /*
     generate new planet randomly
@@ -437,15 +448,105 @@ var generate_new_planet = function(){
     PLANETS.push(planet);
 }
 
-init_game(); // init game
+var DrawMenu = function(){
+    SHOW_MENU = true;
+    stage.removeAllChildren();
+    //document.body.removeEventListener("click", click_keyboard_handler, false)
+    //document.body.removeEventListener('touchmove', click_keyboard_handler, false); 
+    //document.body.removeEventListener('touchstart', click_keyboard_handler, false); 
+    //document.body.removeEventListener('keydown', click_keyboard_handler, false);
+    
+    drawBackground("#454545");
+    
+    var button_width = WIDTH * 0.2;
+    var button_height = HEIGHT * 0.1;
+    
+    // draw score label
+    scorelabel = new createjs.Text();
+    scorelabel.textAlign = "center"; // horizontal
+    scorelabel.textBaseline = "middle";  // vertical
+    scorelabel.text = "Highest Score: "+parseInt(window.localStorage["SPACE_BALL_SCORE"]);
+    scorelabel.x = WIDTH * 0.5;
+    scorelabel.y = HEIGHT * 0.1;
+    scorelabel.font = "Bold 40 Impact";
+    scorelabel.color = "white";
+    stage.addChild(scorelabel);
+    
+    
+    var start_game_button = new createjs.Shape();
+    var start_game_button_text = new createjs.Text();
+    start_game_button.graphics.beginFill("#3f97f2").drawRect(0, 0, button_width, button_height);
+    start_game_button.x = WIDTH * 0.4;
+    start_game_button.y = HEIGHT * 0.2;
+    start_game_button.addEventListener("click", function(){
+        init_game();
+    })
+    stage.addChild(start_game_button);
+    
+    start_game_button_text.textAlign = "center";
+    start_game_button_text.textBaseline = "middle";
+    start_game_button_text.text = "Start Game";
+    start_game_button_text.font = "bold 40 Impact";
+    start_game_button_text.color = "white"; 
+    start_game_button_text.x = start_game_button.x + button_width/2;
+    start_game_button_text.y = start_game_button.y + button_height/2;
+    stage.addChild(start_game_button_text);
+    
+    var global_rank_button = new createjs.Shape();
+    var global_rank_button_text = new createjs.Text();
+    global_rank_button.graphics.beginFill("#3f97f2").drawRect(0, 0, button_width, button_height);
+    global_rank_button.x = WIDTH * 0.4;
+    global_rank_button.y = start_game_button.y + button_height + 50;
+    global_rank_button.addEventListener("click", function(){
+        alert("clicked");
+    })
+    stage.addChild(global_rank_button);
+    
+    global_rank_button_text.textAlign = "center";
+    global_rank_button_text.textBaseline = "middle";
+    global_rank_button_text.text = "Global Rank";
+    global_rank_button_text.font = "bold 40 Impact";
+    global_rank_button_text.color = "white"; 
+    global_rank_button_text.x = global_rank_button.x + button_width/2;
+    global_rank_button_text.y = global_rank_button.y + button_height/2;
+    stage.addChild(global_rank_button_text);
+    
+    
+    stage.update();
+}
+
+/*
+ *      
+ *     Show Walley Soft. 0xGG Game Studio 
+ *       
+ */
+drawBackground("#18668e");
+var Brand = new createjs.Text();
+Brand.textAlign = "center";
+Brand.textBaseline = "middle";
+Brand.text = "Walley Soft\n\n0xGG Game Studio";
+Brand.font = "bold 40 Impact";
+Brand.color = "white";  
+Brand.x = WIDTH *0.5;
+Brand.y = HEIGHT * 0.4;
+stage.addChild(Brand);
+stage.update();
+
+setTimeout(function(){
+    // init_game(); // init game
+    DrawMenu();
+}, 1);
 
 
 
 function tick(){
     if(GAME_START === false) return;
-    MOVE_DOWN_SPEED += 0.02*parseInt(SCORE/100);
+    // MOVE_DOWN_SPEED += 0.02*parseInt(SCORE/100);
     if(MOVE_DOWN_SPEED > 3.0){
         MOVE_DOWN_SPEED = 3.0;
+    }
+    else{
+        MOVE_DOWN_SPEED += 0.0003;        
     }
     if(!GAME_OVER)
         SCORE += 0.01;
