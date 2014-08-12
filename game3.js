@@ -800,6 +800,7 @@ function tick(){
  * 微信朋友圈设置
  *
  */
+ /*
 document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
                 // 发送给好友
                 WeixinJSBridge.on('menu:share:appmessage', function (argv) {
@@ -830,7 +831,7 @@ document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
                     });
                 });
             }, false)
-
+*/
 
 createjs.Ticker.addEventListener("tick", tick);
 // these are equivalent, 1000ms / 40fps = 25ms
