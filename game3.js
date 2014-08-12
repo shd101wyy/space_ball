@@ -466,7 +466,7 @@ var DrawMenu = function(){
     scorelabel = new createjs.Text();
     scorelabel.textAlign = "center"; // horizontal
     scorelabel.textBaseline = "middle";  // vertical
-    scorelabel.text = "Highest Score: "+parseInt(window.localStorage["SPACE_BALL_SCORE"]);
+    scorelabel.text = "Highest Score: "+parseInt(window.localStorage["SPACE_BALL_SCORE"]) + "\n\n点击 右上角按 钮分享到朋友圈 ;)\n";
     scorelabel.x = WIDTH * 0.5;
     scorelabel.y = HEIGHT * 0.3;
     scorelabel.font = "Bold 40 Impact";
@@ -497,7 +497,7 @@ var DrawMenu = function(){
     var version = new createjs.Text();
     version.textAlign = "center";
     version.textBaseline = "middle";
-    version.text = "0xGG Game Studio\n版本: build " + GAME_VERSION;
+    version.text = "0xGG Game Studio\n版本: build " + GAME_VERSION + "\nBy Yiyi, Aya, Sophia, Aaron.";
     version.font = "bold 20 Impact";
     version.color = "white";
     version.y = HEIGHT * 0.8;
@@ -523,6 +523,8 @@ var DrawMenu = function(){
     global_rank_button_text.y = global_rank_button.y + button_height/2;
     stage.addChild(global_rank_button_text);
     */
+
+    document.title = "哈哈我的分数是 " + parseInt(window.localStorage["SPACE_BALL_SCORE"]) + "\n快来击败我啊 ~(*_*)~\n"
 
     stage.update();
 }
