@@ -18,7 +18,7 @@
 
     前30名
 */
-
+var GAME_VERSION = 0.01;
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
 var SHOW_MENU = true;
@@ -467,7 +467,7 @@ var DrawMenu = function(){
     scorelabel.textBaseline = "middle";  // vertical
     scorelabel.text = "Highest Score: "+parseInt(window.localStorage["SPACE_BALL_SCORE"]);
     scorelabel.x = WIDTH * 0.5;
-    scorelabel.y = HEIGHT * 0.1;
+    scorelabel.y = HEIGHT * 0.3;
     scorelabel.font = "Bold 40 Impact";
     scorelabel.color = "white";
     stage.addChild(scorelabel);
@@ -477,7 +477,7 @@ var DrawMenu = function(){
     var start_game_button_text = new createjs.Text();
     start_game_button.graphics.beginFill("#3f97f2").drawRect(0, 0, button_width, button_height);
     start_game_button.x = WIDTH * 0.4;
-    start_game_button.y = HEIGHT * 0.2;
+    start_game_button.y = HEIGHT * 0.5;
     start_game_button.addEventListener("click", function(){
         init_game();
     })
@@ -486,13 +486,23 @@ var DrawMenu = function(){
     
     start_game_button_text.textAlign = "center";
     start_game_button_text.textBaseline = "middle";
-    start_game_button_text.text = "Start Game";
+    start_game_button_text.text = "开始游戏";
     start_game_button_text.font = "bold 40 Impact";
     start_game_button_text.color = "white"; 
     start_game_button_text.x = start_game_button.x + button_width/2;
     start_game_button_text.y = start_game_button.y + button_height/2;
     stage.addChild(start_game_button_text);
     
+    var version = new createjs.Text();
+    version.textAlign = "center";
+    version.textBaseline = "middle";
+    version.text = "版本: build " + GAME_VERSION;
+    version.font = "bold 20 Impact";
+    version.color = "white";
+    version.y = HEIGHT * 0.8;
+    version.x = WIDTH * 0.5;
+    stage.addChild(version);
+    /*
     var global_rank_button = new createjs.Shape();
     var global_rank_button_text = new createjs.Text();
     global_rank_button.graphics.beginFill("#3f97f2").drawRect(0, 0, button_width, button_height);
@@ -511,8 +521,8 @@ var DrawMenu = function(){
     global_rank_button_text.x = global_rank_button.x + button_width/2;
     global_rank_button_text.y = global_rank_button.y + button_height/2;
     stage.addChild(global_rank_button_text);
-    
-    
+    */
+
     stage.update();
 }
 
