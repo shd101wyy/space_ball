@@ -26,6 +26,7 @@ var canvas = document.getElementById("game_canvas");
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
+
 var stage = new createjs.Stage("game_canvas");
 createjs.Touch.enable(stage);
 
@@ -528,6 +529,8 @@ var DrawMenu = function(){
 
     stage.update();
 }
+
+
 
 /*
  *      
