@@ -29,6 +29,7 @@ canvas.height = HEIGHT;
 var stage = new createjs.Stage("game_canvas");
 createjs.Touch.enable(stage);
 
+
 var BACKGROUND_COLOR = "#454545";
 /*
     draw background
@@ -134,7 +135,7 @@ function Planet(x, y, radius){
                 this.planet.x = this.x;
                 this.planet.y = this.y
                 
-                this.text.text = "⟱";
+                this.text.text = "⬇︎";
                 this.text.font = "bold 40 Impact";
                 this.text.color = "white";  
                 this.text.x = this.x;
@@ -145,7 +146,7 @@ function Planet(x, y, radius){
                 this.planet.x = this.x;
                 this.planet.y = this.y
                 
-                this.text.text = "⟰";
+                this.text.text = "⬆︎";
                 this.text.font = "bold 40 Impact";
                 this.text.color = "white";
                 this.text.x = this.x;
@@ -230,12 +231,12 @@ function Planet(x, y, radius){
             this.text.y = this.y;   
         }
         else if (this.type === 2){
-            this.text.text = "⟰";
+            this.text.text = "⬆︎";
             this.text.x = this.x;
             this.text.y = this.y;   
         }
         else if (this.type === 1){
-            this.text.text = "⟱";
+            this.text.text = "⬇︎";
             this.text.x = this.x;
             this.text.y = this.y;              
         }
@@ -496,7 +497,7 @@ var DrawMenu = function(){
     var version = new createjs.Text();
     version.textAlign = "center";
     version.textBaseline = "middle";
-    version.text = "版本: build " + GAME_VERSION;
+    version.text = "0xGG Game Studio\n版本: build " + GAME_VERSION;
     version.font = "bold 20 Impact";
     version.color = "white";
     version.y = HEIGHT * 0.8;
