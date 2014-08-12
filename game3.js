@@ -26,6 +26,8 @@ var canvas = document.getElementById("game_canvas");
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
+var 微信分享的内容 = "";
+
 
 var stage = new createjs.Stage("game_canvas");
 createjs.Touch.enable(stage);
@@ -526,7 +528,8 @@ var DrawMenu = function(){
     */
 
     document.title = "哈哈我的分数是 " + parseInt(window.localStorage["SPACE_BALL_SCORE"]) + "\n快来击败我啊 ~(*_*)~\n"
-
+    微信分享的内容 = document.title;
+    
     stage.update();
 }
 
@@ -791,6 +794,43 @@ function tick(){
     }
     stage.update();
 }
+
+/*
+ *
+ * 微信朋友圈设置
+ *
+ */
+document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+                // 发送给好友
+                WeixinJSBridge.on('menu:share:appmessage', function (argv) {
+                    WeixinJSBridge.invoke('sendAppMessage', {
+                        "appid": "",
+                        "img_url": "http://planetwalley.com/space_ball/图标.png",
+                        "img_width": "300",
+                        "img_height": "300",
+                        "link": "http://planetwalley.com/space_ball/",
+                        "desc":  "Space Ball",
+                        "title": document.title
+                    }, function (res) {
+                        _report('send_msg', res.err_msg);
+                    })
+                });
+
+                // 分享到朋友圈
+                WeixinJSBridge.on('menu:share:timeline', function (argv) {
+                    WeixinJSBridge.invoke('shareTimeline', {
+                        "img_url": "http://planetwalley.com/space_ball/图标.png",
+                        "img_width": "300",
+                        "img_height": "300",
+                        "link": "http://planetwalley.com/space_ball/",
+                        "desc":  "Space Ball",
+                        "title": document.title
+                    }, function (res) {
+                        _report('timeline', res.err_msg);
+                    });
+                });
+            }, false)
+
 
 createjs.Ticker.addEventListener("tick", tick);
 // these are equivalent, 1000ms / 40fps = 25ms
