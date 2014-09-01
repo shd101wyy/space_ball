@@ -415,9 +415,11 @@ var click_event = function(){
 
 var game_is_over = function(){
     scorelabel.x = WIDTH / 2;
-    scorelabel.y = HEIGHT / 2;
-    scorelabel.text = "Score\n" + parseInt(SCORE);
-    scorelabel.font = "Bold 80 Impact";   
+    scorelabel.y = HEIGHT * 0.3;
+    scorelabel.text = "Score\n" + parseInt(SCORE)+"\n\n点击屏幕继续";
+    scorelabel.font = "Bold 80 Impact"; 
+    scorelabel.textAlign = "center"; // horizontal
+    scorelabel.textBaseline = "middle";  // vertical
     GAME_START = false;
     
     if(SCORE > parseInt(window.localStorage["SPACE_BALL_SCORE"])){
