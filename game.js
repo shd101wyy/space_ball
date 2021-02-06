@@ -17,11 +17,16 @@
 
     前30名
 */
-var GAME_VERSION = 0.01;
+var GAME_VERSION = 0.02;
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
 var SHOW_MENU = true;
 var canvas = document.getElementById("game_canvas");
+
+if (WIDTH > HEIGHT) {
+  WIDTH = (HEIGHT / 4) * 3;
+}
+
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
@@ -323,7 +328,7 @@ var init_game = function () {
   scorelabel.textBaseline = "middle"; // vertical
   scorelabel.x = 64;
   scorelabel.y = 32;
-  scorelabel.text = "Score\n" + parseInt(SCORE);
+  scorelabel.text = "分数\n" + parseInt(SCORE);
 
   scorelabel.font = "bold 30px Impact";
   scorelabel.color = "white";
@@ -378,7 +383,7 @@ var click_event = function () {
     GAME_START = true;
     scorelabel.x = 64;
     scorelabel.y = 32;
-    scorelabel.text = "Score\n" + parseInt(SCORE);
+    scorelabel.text = "分数\n" + parseInt(SCORE);
     return;
   }
   for (var i = 0; i < DOTS.length; i++) {
@@ -421,7 +426,7 @@ var click_event = function () {
 var game_is_over = function () {
   scorelabel.x = WIDTH / 2;
   scorelabel.y = HEIGHT * 0.3;
-  scorelabel.text = "Score\n" + parseInt(SCORE) + "\n\n点击屏幕继续";
+  scorelabel.text = "分数\n" + parseInt(SCORE) + "\n\n点击屏幕继续";
   scorelabel.font = "Bold 40px Impact";
   scorelabel.textAlign = "center"; // horizontal
   scorelabel.textBaseline = "middle"; // vertical
@@ -474,7 +479,7 @@ var DrawMenu = function () {
   scorelabel.textAlign = "center"; // horizontal
   scorelabel.textBaseline = "middle"; // vertical
   scorelabel.text =
-    "Highest Score: " +
+    "最高分 " +
     parseInt(window.localStorage["SPACE_BALL_SCORE"]) +
     "\n\n点击 右上角按钮\n\n分享到朋友圈 ;)\n";
   scorelabel.x = WIDTH * 0.5;
@@ -508,7 +513,7 @@ var DrawMenu = function () {
   var version = new createjs.Text();
   version.textAlign = "center";
   version.textBaseline = "middle";
-  version.text = "0xGG Game Studio\n版本: build " + GAME_VERSION;
+  version.text = "0xGG\n版本: build " + GAME_VERSION;
   // + "\nBy Yiyi, Aya, Sophia, Aaron.";
   version.font = "bold 20 Impact";
   version.color = "white";
@@ -562,7 +567,7 @@ function tick() {
     generate_new_planet();
   }
   // show score
-  scorelabel.text = "Score\n" + parseInt(SCORE);
+  scorelabel.text = "分数\n" + parseInt(SCORE);
 
   //if(BUTTON_CLICKED) return;
   for (var i = PLANETS_START; i < PLANETS.length; i++) {

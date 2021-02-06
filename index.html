@@ -15,19 +15,23 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <style>
       html,
-      body,
-      canvas {
+      body {
         height: 100%;
         width: 100%;
         margin: 0;
         padding: 0;
         overflow: hidden;
-        -webkit-text-size-adjust: 100%;
-        -ms-text-size-adjust: 100%;
+        background-color: #212121;
       }
 
       canvas {
+        position: relative;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
         image-rendering: pixelated;
+        margin: 0 auto;
+        left: 50%;
+        transform: translateX(-50%);
       }
     </style>
     <div id="wx_pic" style="margin: 0 auto; display: none">
