@@ -96,19 +96,19 @@ function Planet(x, y, radius) {
   this.x = x;
   this.y = y;
   this.radius = radius;
-  this.orbit = radius + 20;
+  this.orbit = radius + 12;
   this.w = 35 * Math.sqrt(1 / this.radius);
   this.inside = false;
 
   this.planet = new createjs.Shape();
   stage.addChild(this.planet);
 
-  this.move_down_speed = 1;
+  this.moveDownSpeed = 1;
   this.type = 0;
   this.used = 0;
   this.max_radius = this.radius * 1.5;
   this.min_radius = this.radius * 0.8;
-  this.increasing_radius_rate = 1;
+  this.increasingRadiusRate = 1;
 
   this.text = new createjs.Text();
   this.text.textAlign = "center";
@@ -116,7 +116,7 @@ function Planet(x, y, radius) {
   stage.addChild(this.text);
 
   this.press_count = 0;
-  this.exploding_timer = parseInt(6000 + Math.random() * 5000); // 4000 miliseconds
+  this.explodingTimer = parseInt(6000 + Math.random() * 5000); // 4000 miliseconds
   this.can_be_used = true;
   this.draw = function () {
     // draw planet
@@ -130,7 +130,7 @@ function Planet(x, y, radius) {
         this.text.font = "bold 40px Arial";
         this.text.color = "white";
         this.text.x = this.x;
-        this.text.y = this.y;
+        this.text.y = this.y + 4;
         break;
       case 1: // Slow Down Star
         this.planet.graphics.beginFill("#a3eecd").drawCircle(0, 0, this.radius);
@@ -161,7 +161,7 @@ function Planet(x, y, radius) {
         this.planet.y = this.y;
 
         this.text.text = this.press_count + "";
-        this.text.font = "bold 30 Impact";
+        this.text.font = "bold 30px Impact";
         this.text.color = "white";
         this.text.x = this.x;
         this.text.y = this.y;
@@ -218,7 +218,7 @@ function Planet(x, y, radius) {
   };
   this.move_down = function () {
     // planet move down
-    this.y += this.move_down_speed + MOVE_DOWN_SPEED;
+    this.y += this.moveDownSpeed + MOVE_DOWN_SPEED;
     this.planet.y = this.y;
     // this.planet.animate({cx: this.x, cy:this.y});
     if (this.type === 3) {
@@ -244,17 +244,17 @@ function Planet(x, y, radius) {
     } else if (this.type === 0) {
       this.text.text = "☉";
       this.text.x = this.x;
-      this.text.y = this.y;
+      this.text.y = this.y + 4;
     }
 
     if (this.type === 6) {
       if (this.radius >= this.max_radius) {
-        this.increasing_radius_rate = -Math.abs(this.increasing_radius_rate);
+        this.increasingRadiusRate = -Math.abs(this.increasingRadiusRate);
       }
       if (this.radius <= this.min_radius) {
-        this.increasing_radius_rate = Math.abs(this.increasing_radius_rate);
+        this.increasingRadiusRate = Math.abs(this.increasingRadiusRate);
       }
-      this.radius = this.radius + this.increasing_radius_rate;
+      this.radius = this.radius + this.increasingRadiusRate;
       this.orbit = this.radius + 10;
       // this.planet.radius = this.radius;
       // this.planet.animate({r:this.radius});
@@ -321,19 +321,19 @@ var init_game = function () {
   scorelabel = new createjs.Text();
   scorelabel.textAlign = "center"; // horizontal
   scorelabel.textBaseline = "middle"; // vertical
-  scorelabel.x = 100;
-  scorelabel.y = 100;
+  scorelabel.x = 64;
+  scorelabel.y = 32;
   scorelabel.text = "Score\n" + parseInt(SCORE);
 
-  scorelabel.font = "bold 40px Impact";
+  scorelabel.font = "bold 30px Impact";
   scorelabel.color = "white";
   stage.addChild(scorelabel);
 
-  planet1 = new Planet(320, 300, 50);
+  planet1 = new Planet(WIDTH / 2, 300, 50);
   planet1.draw();
   PLANETS.push(planet1);
 
-  planet2 = new Planet(360, 150, 60);
+  planet2 = new Planet(WIDTH / 2, 150, 60);
   planet2.type = 4;
   planet2.draw();
   PLANETS.push(planet2);
@@ -349,8 +349,8 @@ var init_game = function () {
 
   dot = new createjs.Shape();
   dot.graphics.beginFill("#e8e8e8").drawCircle(0, 0, RADIUS_OF_THE_BALL);
-  dot.leaving_planet = null;
-  dot.orbiting_planet = planet1;
+  dot.leavingPlanet = null;
+  dot.orbitingPlanet = planet1;
   dot.status = 0;
   dot.CLOCKWISE = false;
   dot.TIME = 0;
@@ -376,30 +376,30 @@ var click_event = function () {
   }
   if (GAME_START == false) {
     GAME_START = true;
-    scorelabel.x = 100;
-    scorelabel.y = 100;
+    scorelabel.x = 64;
+    scorelabel.y = 32;
     scorelabel.text = "Score\n" + parseInt(SCORE);
     return;
   }
   for (var i = 0; i < DOTS.length; i++) {
     var dot = DOTS[i];
     if (dot.lose) continue;
-    if (dot.orbiting_planet.type === 3 && dot.orbiting_planet.press_count > 0) {
+    if (dot.orbitingPlanet.type === 3 && dot.orbitingPlanet.press_count > 0) {
       // press 10 times
-      dot.orbiting_planet.press_count--;
+      dot.orbitingPlanet.press_count--;
       continue;
     }
     if (dot.status !== 1) {
-      var x = dot.x - dot.orbiting_planet.x; // smallx - bigx
-      var y = dot.y - dot.orbiting_planet.y; // smally - bigy
+      var x = dot.x - dot.orbitingPlanet.x; // smallx - bigx
+      var y = dot.y - dot.orbitingPlanet.y; // smally - bigy
       var theta = Math.atan(y / x);
       dot.V_X =
         Math.sqrt(x * x + y * y) *
-        ((dot.orbiting_planet.w * Math.PI) / 180) *
+        ((dot.orbitingPlanet.w * Math.PI) / 180) *
         Math.sin(theta); //Vy of big in flight
       dot.V_Y =
         -Math.sqrt(x * x + y * y) *
-        ((dot.orbiting_planet.w * Math.PI) / 180) *
+        ((dot.orbitingPlanet.w * Math.PI) / 180) *
         Math.cos(theta); //Vx of small in flight
       dot.status = 1; // flying
       if (dot.CLOCKWISE) {
@@ -413,7 +413,7 @@ var click_event = function () {
           dot.V_Y = -dot.V_Y;
         }
       }
-      dot.leaving_planet = dot.orbiting_planet;
+      dot.leavingPlanet = dot.orbitingPlanet;
     }
   }
 };
@@ -466,7 +466,7 @@ var DrawMenu = function () {
 
   drawBackground("#454545");
 
-  var button_width = WIDTH * 0.2;
+  var button_width = WIDTH * 0.4;
   var button_height = HEIGHT * 0.1;
 
   // draw score label
@@ -479,39 +479,37 @@ var DrawMenu = function () {
     "\n\n点击 右上角按钮\n\n分享到朋友圈 ;)\n";
   scorelabel.x = WIDTH * 0.5;
   scorelabel.y = HEIGHT * 0.3;
-  scorelabel.font = "bold 30px Impact";
+  scorelabel.font = "bold 24px Impact";
   scorelabel.color = "white";
   stage.addChild(scorelabel);
 
-  var start_game_button = new createjs.Shape();
-  var start_game_button_text = new createjs.Text();
-  start_game_button.graphics
+  var startGameButton = new createjs.Shape();
+  var startGameButtonText = new createjs.Text();
+  startGameButton.graphics
     .beginFill("#3f97f2")
     .drawRect(0, 0, button_width, button_height);
-  start_game_button.x = WIDTH * 0.4;
-  start_game_button.y = HEIGHT * 0.5;
-  start_game_button.addEventListener("click", function () {
+  startGameButton.x = WIDTH * 0.3;
+  startGameButton.y = HEIGHT * 0.6;
+  startGameButton.addEventListener("click", function () {
     init_game();
   });
 
-  stage.addChild(start_game_button);
+  stage.addChild(startGameButton);
 
-  start_game_button_text.textAlign = "center";
-  start_game_button_text.textBaseline = "middle";
-  start_game_button_text.text = "开始游戏";
-  start_game_button_text.font = "bold 20px Impact";
-  start_game_button_text.color = "white";
-  start_game_button_text.x = start_game_button.x + button_width / 2;
-  start_game_button_text.y = start_game_button.y + button_height / 2;
-  stage.addChild(start_game_button_text);
+  startGameButtonText.textAlign = "center";
+  startGameButtonText.textBaseline = "middle";
+  startGameButtonText.text = "开始游戏";
+  startGameButtonText.font = "bold 20px Impact";
+  startGameButtonText.color = "white";
+  startGameButtonText.x = startGameButton.x + button_width / 2;
+  startGameButtonText.y = startGameButton.y + button_height / 2;
+  stage.addChild(startGameButtonText);
 
   var version = new createjs.Text();
   version.textAlign = "center";
   version.textBaseline = "middle";
-  version.text =
-    "0xGG Game Studio\n版本: build " +
-    GAME_VERSION +
-    "\nBy Yiyi, Aya, Sophia, Aaron.";
+  version.text = "0xGG Game Studio\n版本: build " + GAME_VERSION;
+  // + "\nBy Yiyi, Aya, Sophia, Aaron.";
   version.font = "bold 20 Impact";
   version.color = "white";
   version.y = HEIGHT * 0.8;
@@ -589,12 +587,12 @@ function tick() {
     } // too low
     if (p.type === 4 && p.used === 1) {
       // check explosion
-      //if (p.exploding_timer <= 2000 + TIME_INTERVAL/2 && p.exploding_timer >= 2000 - TIME_INTERVAL/2 ){ // 为了保证肯定能跳
+      //if (p.explodingTimer <= 2000 + TIME_INTERVAL/2 && p.explodingTimer >= 2000 - TIME_INTERVAL/2 ){ // 为了保证肯定能跳
       //    generate_new_planet();
       //}
 
-      p.exploding_timer -= TIME_INTERVAL;
-      if (p.exploding_timer < 0) {
+      p.explodingTimer -= TIME_INTERVAL;
+      if (p.explodingTimer < 0) {
         var save_ = p;
         /*
                     rgb(204, 51, 51)
@@ -604,7 +602,7 @@ function tick() {
                     160 / 100
                     -44 / 100
                 */
-        if (p.exploding_timer >= -1500) {
+        if (p.explodingTimer >= -1500) {
           save_.planet.redOffset = parseInt(save_.planet.redOffset + 1);
           save_.planet.greenOffset = parseInt(save_.planet.greenOffset + 1);
           save_.planet.blueOffset = parseInt(save_.planet.blueOffset - 1);
@@ -624,13 +622,13 @@ function tick() {
         for (var j = 0; j < DOTS.length; j++) {
           if (DOTS[j].status === 1) continue;
           if (DOTS[j].lose) continue;
-          if (DOTS[j].orbiting_planet === PLANETS[i]) {
+          if (DOTS[j].orbitingPlanet === PLANETS[i]) {
             DOTS[j].lose = true;
             DOTS[j].y = HEIGHT + 400;
           }
         }
       } else {
-        p.text.text = parseInt(PLANETS[i].exploding_timer / 1000) + "";
+        p.text.text = parseInt(PLANETS[i].explodingTimer / 1000) + "";
       }
     }
   }
@@ -659,13 +657,11 @@ function tick() {
       // orbiting
       var theta = dot.THETA0;
       if (dot.CLOCKWISE)
-        theta = theta + (dot.orbiting_planet.w * dot.TIME) / 1000;
-      else theta = theta - (dot.orbiting_planet.w * dot.TIME) / 1000;
+        theta = theta + (dot.orbitingPlanet.w * dot.TIME) / 1000;
+      else theta = theta - (dot.orbitingPlanet.w * dot.TIME) / 1000;
 
-      var x =
-        dot.orbiting_planet.orbit * Math.cos(theta) + dot.orbiting_planet.x;
-      var y =
-        dot.orbiting_planet.orbit * Math.sin(theta) + dot.orbiting_planet.y;
+      var x = dot.orbitingPlanet.orbit * Math.cos(theta) + dot.orbitingPlanet.x;
+      var y = dot.orbitingPlanet.orbit * Math.sin(theta) + dot.orbitingPlanet.y;
       // dot.animate({cx:x, cy:y});
       dot.x = x;
       dot.y = y;
@@ -677,10 +673,10 @@ function tick() {
         if (p === null) continue;
         if (p.can_be_used === false) continue;
         if (p.y >= HEIGHT) continue;
-        if (p === dot.leaving_planet) continue;
+        if (p === dot.leavingPlanet) continue;
         if (p.checkInside(dot)) {
           // meets planet
-          dot.orbiting_planet = p;
+          dot.orbitingPlanet = p;
           switch (p.type) {
             case 0: // simple
               SCORE += 5;
@@ -718,27 +714,27 @@ function tick() {
                   // create 5 new dots
                   var ran = Math.random() - 0.5;
 
-                  var new_dot = new createjs.Shape();
-                  new_dot.graphics
+                  var newDot = new createjs.Shape();
+                  newDot.graphics
                     .beginFill("#e8e8e8")
                     .drawCircle(0, 0, RADIUS_OF_THE_BALL);
-                  new_dot.leaving_planet = dot.leaving_planet;
-                  new_dot.orbiting_planet = dot.orbiting_planet;
-                  new_dot.status = 0;
-                  new_dot.CLOCKWISE = Math.random() > 0.5 ? true : false;
-                  new_dot.TIME = 0;
-                  new_dot.THETA0 = ran;
-                  new_dot.lose = false;
-                  new_dot.x =
-                    dot.orbiting_planet.x +
-                    dot.orbiting_planet.orbit * Math.cos(ran);
-                  new_dot.y =
-                    dot.orbiting_planet.y +
-                    dot.orbiting_planet.orbit * Math.sin(ran);
+                  newDot.leavingPlanet = dot.leavingPlanet;
+                  newDot.orbitingPlanet = dot.orbitingPlanet;
+                  newDot.status = 0;
+                  newDot.CLOCKWISE = Math.random() > 0.5 ? true : false;
+                  newDot.TIME = 0;
+                  newDot.THETA0 = ran;
+                  newDot.lose = false;
+                  newDot.x =
+                    dot.orbitingPlanet.x +
+                    dot.orbitingPlanet.orbit * Math.cos(ran);
+                  newDot.y =
+                    dot.orbitingPlanet.y +
+                    dot.orbitingPlanet.orbit * Math.sin(ran);
 
-                  stage.addChild(new_dot);
+                  stage.addChild(newDot);
 
-                  DOTS.push(new_dot); // save that dot
+                  DOTS.push(newDot); // save that dot
                 }
                 p.used = 1;
               }
@@ -752,25 +748,24 @@ function tick() {
           dot.TIME = 0; // clear time
 
           if (dot.V_X > 0) {
-            if (dot.y - dot.orbiting_planet.y > 0) {
+            if (dot.y - dot.orbitingPlanet.y > 0) {
               if (Math.abs(dot.V_X / dot.V_Y) < 1) dot.CLOCKWISE = false;
               else dot.CLOCKWISE = true;
             } else dot.CLOCKWISE = true;
           } else {
-            if (dot.y - dot.orbiting_planet.y > 0) {
+            if (dot.y - dot.orbitingPlanet.y > 0) {
               if (Math.abs(dot.V_X / dot.V_Y) < 1) dot.CLOCKWISE = true;
               else dot.CLOCKWISE = false;
             } else dot.CLOCKWISE = false;
           }
-          if (dot.x - dot.orbiting_planet.x >= 0)
+          if (dot.x - dot.orbitingPlanet.x >= 0)
             dot.THETA0 = Math.atan(
-              (dot.y - dot.orbiting_planet.y) / (dot.x - dot.orbiting_planet.x)
+              (dot.y - dot.orbitingPlanet.y) / (dot.x - dot.orbitingPlanet.x)
             );
           else
             dot.THETA0 =
               Math.atan(
-                (dot.y - dot.orbiting_planet.y) /
-                  (dot.x - dot.orbiting_planet.x)
+                (dot.y - dot.orbitingPlanet.y) / (dot.x - dot.orbitingPlanet.x)
               ) + Math.PI;
 
           break;
