@@ -1,29 +1,35 @@
 <html>
-    <head>
-        <title> Space Ball </title>
-        <meta charset="utf-8">
+  <head>
+    <title>Space Ball</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+    <style>
+      html,
+      body,
+      canvas {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
 
-        <!-- <meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" /> -->
-        <!-- <meta name="apple-mobile-web-app-capable" content="yes"> -->
-        <!-- <meta name="format-detection" content="telephone=no"> -->
-        <style>
-            html, body, canvas{
-                height: 100%;
-                width: 100%;
-                margin: 0;
-                padding: 0;
-                overflow: hidden;
-            }
-        </style>
-        <div id='wx_pic' style='margin:0 auto;display:none;'>
-            <img src='http://planetwalley.com/space_ball/图标.png' />
-        </div>
-    </head>
-    <body>
-        <canvas id="game_canvas">
-        </canvas>
-    </body>
-    
-    <script src="easel.js"></script>
-    <script src="game3.js"></script>
+      canvas {
+        image-rendering: pixelated;
+      }
+    </style>
+    <div id="wx_pic" style="margin: 0 auto; display: none">
+      <img src="./图标.png" />
+    </div>
+  </head>
+  <body>
+    <canvas id="game_canvas"> </canvas>
+  </body>
+
+  <script src="easel.js"></script>
+  <script src="game.js"></script>
 </html>
